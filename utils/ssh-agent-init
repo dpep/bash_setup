@@ -45,5 +45,9 @@ if [ -z "$SSH_AGENT_PID" ]; then
     source ~/.ssh/env > /dev/null 2>&1
 fi
 
+
+# tidy up
+unset ssh_agent_alive
+
 # echo $SSH_AGENT_PID
 # echo $SSH_AUTH_SOCK
