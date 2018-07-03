@@ -1,12 +1,10 @@
-#!/bin/sh
-
-# check to see if a ssh-agent is connected to this terminal.
+# check to see if a ssh-agent is connected to this shell.
 # if not, see if one is running on this machine which we
 # can connect to.  otherwise, start up a new agent and
 # save the connection details for reuse.
 
 
-agent_alive() {
+ssh_agent_alive() {
   if [ -n "$SSH_AGENT_PID" ]; then
     return `ps -p $SSH_AGENT_PID | grep -q 'ssh-agent'`
   fi
@@ -17,7 +15,7 @@ agent_alive() {
 
 # if PID is defined, make sure agent is actually running
 if [ -n "$SSH_AGENT_PID" ]; then
-  if ! agent_alive; then
+  if ! ssh_agent_alive; then
     echo 'ssh-agent: invalid PID'
     # agent is dead
     unset SSH_AGENT_PID
@@ -30,7 +28,7 @@ if [ -z "$SSH_AGENT_PID" ]; then
   if [ -f ~/.ssh/env ]; then
     source ~/.ssh/env
 
-    if ! agent_alive; then
+    if ! ssh_agent_alive; then
       echo 'ssh-agent: ssh env file is stale'
       rm ~/.ssh/env
       unset SSH_AGENT_PID
@@ -41,7 +39,7 @@ fi
 
 # start up a new agent and save env vars
 if [ -z "$SSH_AGENT_PID" ]; then
-    echo 'ssh-agent: spawning'
+    echo 'ssh-agent: starting new agent'
     ssh-agent -s | sed 's/^echo/#echo/' > ~/.ssh/env
     chmod 600 ~/.ssh/env
     source ~/.ssh/env > /dev/null 2>&1
