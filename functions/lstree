@@ -1,0 +1,7 @@
+# display directories recursively.  more pretty than `ls -R`
+# alternatively, `brew install tree`
+
+
+function lstree() {
+  find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+}
