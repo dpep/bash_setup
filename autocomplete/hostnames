@@ -1,0 +1,17 @@
+# autocomplete ssh and scp with known hostnames
+
+# known hosts
+hostnames=`cat ~/.ssh/known_hosts 2> /dev/null | cut -f 1 -d ' ' | sed -e s/,.*//g | uniq | grep -i [a-z] | cut -d: -f2`
+
+# ssh config
+hostnames+=`grep 'Host\b' ~/.ssh/config 2> /dev/null | grep -E '[a-zA-Z0-9.-]*$' -o | cut -d: -f2`
+
+# sort and dedup
+hostnames=`printf '%s\n' ${hostnames[@]} | sort | uniq`
+
+# enable autocomplete
+complete -W "$(echo ${hostnames[@]})" ssh
+complete -W "$(echo ${hostnames[@]})" scp
+
+# tidy up
+unset hostnames
