@@ -10,8 +10,8 @@ hostnames+=`grep 'Host\b' ~/.ssh/config 2> /dev/null | grep -E '[a-zA-Z0-9.-]*$'
 hostnames=`printf '%s\n' ${hostnames[@]} | sort | uniq`
 
 # enable autocomplete
-complete -W "$(echo ${hostnames[@]})" ssh
-complete -W "$(echo ${hostnames[@]})" scp
+complete -W "${hostnames[@]}" ssh
+complete -W "${hostnames[@]}" scp
 
 # tidy up
 unset hostnames
