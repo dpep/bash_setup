@@ -1,0 +1,47 @@
+# Make movement easier, eg.
+# `c path/to/dir/like/normal/cd`
+# `c path/to/file/cause/autocomplete`
+# `c [`  # cd a separate shell into the same dir
+# `c -1`  # go back to the last dir you were in, like popd
+
+
+function c() {
+  local DIR="$@"
+  local history_file=~/.cd_history
+  local history_size
+
+  # max history size
+  if [ -n "$HISTSIZE" ]; then
+    history_size=$HISTSIZE
+  else
+    history_size=5
+  fi
+
+  if [ -n "$DIR" ] && [ -f $DIR ] ; then
+    # go to a dir containing the file
+    DIR=`dirname $DIR`
+  fi
+
+  if [[ $DIR == "[" || $DIR == "]" ]]; then
+    # go to current working dir
+    cd `tail -n1 $history_file`
+  elif [[ $DIR == '-1' ]]; then
+    # go back to last visited dir
+    cd `tail -n2 $history_file | head -n1`
+  else
+    cd $DIR
+  fi
+
+  export CWD=pwd
+  # update and truncate history file
+  if [[ "$CWD" != `tail -n1 $history_file` ]]; then
+    # no duplicates
+    echo $CWD >> "$history_file"
+  fi
+
+  if [[ `wc -l < $history_file` -gt $history_size ]]; then
+    sed -i "1 d" $history_file
+  fi
+
+  ls
+}
