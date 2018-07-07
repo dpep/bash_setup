@@ -1,0 +1,75 @@
+[user]
+#  name  = <your_unixname>
+#  email = <your_email>
+
+[core]
+  excludesfile = ~/.git/exclude
+  pager = less -r
+
+[alias]
+  b = branch -v
+  br = branch -v
+  co = checkout
+  com = !git checkout master && git pull
+  ci = commit
+  d = diff
+  st = status
+  sh = show
+  e = commit --amend -e
+  dd = branch -d
+  root = rev-parse --show-toplevel
+
+  # does the branch contain uncommitted changes
+  dirty = !git diff-index --name-only HEAD
+
+  # deal with upstream branch nonsense
+  upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{u}
+
+  # List names of changed files
+  names = diff HEAD^ --name-only
+
+  # Show the commits and content in this branch
+  history = log --pretty=oneline
+
+  # Commit changes to current head as amended commit
+  cia = commit --amend -C HEAD
+  cie = commit --amend -C HEAD -e
+
+
+# Show a log of '56 minutes ago' rather than 'November 12, 2008 12:34:53'
+[log]
+  date = relative
+
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+
+# Use only for black background terminal
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  plain = white
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+[push]
+  default = simple
+
+[branch]
+  autosetuprebase = always  # default to `git pull --rebase`
+  autosetupmerge = true   # automatically track remote branches
+
+[pull]
+  rebase = true

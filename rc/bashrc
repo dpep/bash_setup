@@ -1,0 +1,87 @@
+#!/bin/sh
+
+# If not running interactively, abort
+case $- in
+  *i*) ;;
+    *) return;;
+esac
+
+reset
+
+# Init
+  export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:$PATH"
+
+  export EDITOR=`which vim`
+  export GREP_OPTIONS="--color=auto -EIs"
+  export LANG='en_US.utf8'
+  export LANGUAGE="$LANG"
+  export LC_ALL="$LANG"
+  export PAGER=`which less`
+
+  # Suppress some C / C++ compliation errors
+  export CFLAGS=-Qunused-arguments
+  export CPPFLAGS=-Qunused-arguments
+
+  # add these directories to the `cd` search space
+  export CDPATH='./:~/'
+
+
+# Prompt
+  export PROMPT_COMMAND='
+      if [ $? -ne 0 ];
+        then CURSOR_PROMPT="#>";
+        else CURSOR_PROMPT=">";
+      fi;
+
+      # show git branch and its dirty status
+      export GIT_BR=$(git symbolic-ref --short --quiet HEAD 2>/dev/null)
+      if [ -z $GIT_BR ]; then
+        GIT_BR_STR=""
+      else
+        GIT_DIRTY=""
+        # git diff-index --cached --quiet HEAD -- 2>/dev/null || GIT_DIRTY='*'
+        # git diff-files --quiet || GIT_DIRTY='*'
+        git status --short | awk "{ print $2 }" | grep -q ".+" && GIT_DIRTY='*'
+        GIT_BR_STR="[$GIT_DIRTY$GIT_BR]"
+      fi;
+
+      # put everything together
+      PS1="\h:\w $GIT_BR_STR\n$CURSOR_PROMPT "
+'
+
+
+# History
+  # no duplicates
+  export HISTCONTROL=erasedups
+  export HISTSIZE=500
+  export HISTFILESIZE=100000
+
+
+# Utils
+  # customize this file
+  alias customize="$EDITOR $BASH_SOURCE; source $BASH_SOURCE"
+  alias l='ls'
+  alias ll='ls -hl'
+  alias la='ls -hla'
+  alias lr='ls -hlR'
+  alias rm='/bin/rm -f'
+  alias mv='/bin/mv -i'
+  alias cp='/bin/cp -i'
+  alias du='/usr/bin/du -h'
+  alias grep="/usr/bin/grep --color=auto -Isn"
+  alias killit="kill -9 %"
+  alias g='git'
+
+
+# Load Aliases
+  if [ -f ~/.bash_aliases ]; then
+      . ~/.bash_aliases
+  fi
+
+
+  # prevent Control-d from logging you out
+  shopt -s -o ignoreeof
+
+
+  # set terminal title
+  echo -ne "\033]0;${USER}@"`hostname | cut -d'.' -f1,2`"\007"
