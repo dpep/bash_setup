@@ -1,0 +1,97 @@
+#########################  Configurations  #########################
+
+IRB.conf[:SAVE_HISTORY]     = 1000
+IRB.conf[:HISTORY_FILE]     = "#{ENV['HOME']}/.irb/history"
+IRB.conf[:AUTO_INDENT]      = true
+IRB.conf[:USE_READLINE]     = true
+IRB.conf[:IGNORE_EOF]       = true
+IRB.conf[:BACK_TRACE_LIMIT] = 5
+
+
+# Normal prompts will
+# be '>> ', continuation prompts '?> ' (in red), and return values, '=> %s',
+# (in yellow). There will be no string continuation prompts.
+IRB.conf[:PROMPT][:CUSTOM] = {
+  :PROMPT_I => '> ',                            # normal prompt
+  :PROMPT_N => '>> ',
+  :PROMPT_S => "\033[01;31m|\033[00m  ",        # for continuated strings
+  :PROMPT_C => ">> ",                           # for continuated statement
+  :RETURN   => "\033[01;33m=> %s\033[00m\n",      # format to return value
+}
+IRB.conf[:PROMPT_MODE] = :CUSTOM  # Now make it the default
+
+
+#########################  Load Libraries  #########################
+
+[
+  'awesome_print',
+  'byebug',
+  'clockwork',  # eg 3.times
+  'irb/completion',  # Tab completion
+  'readline',
+].each do |_module|
+  begin
+    require _module
+  rescue LoadError
+    # ignore
+  end
+end
+
+begin
+  require 'awesome_print'
+  AwesomePrint.irb!
+  AwesomePrint.pry!
+rescue LoadError; end
+
+
+#########################  Helper Functions  #########################
+
+def here
+  puts "here  =>  #{caller.first}\n"
+end
+
+
+def p(*args)
+  fn = defined?(AwesomePrint) ? method('ap') : method('puts')
+  args.each {|arg| fn.call arg }
+  puts "\n" if args.count == 0
+  nil
+end
+
+
+def debug *args
+  p Thread.current.backtrace[2]
+  p args if args
+  p
+  nil
+end
+
+
+def abc
+  { a: 1, b: 2, c: 3, d: 4 }
+end
+
+
+def ott(size = 10)
+  (1..size).to_a
+end
+
+alias :q :quit
+
+
+def now
+  Time.now
+end
+
+
+#########################  IRBRC  #########################
+# see https://github.com/dpep/rb_irbrc
+
+begin
+  require 'irbrc'
+  define_singleton_method(:r) do
+    load_rc
+  end
+rescue LoadError; end
+
+r rescue nil
