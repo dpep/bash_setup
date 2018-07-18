@@ -1,0 +1,83 @@
+" automatically reload .vimrc when changing
+autocmd! bufwritepost .vimrc source %
+
+" backups
+set backupdir=~/.vim/backups    " use backup directory
+set backupext=.bak              " postfix with this extension
+
+" Searching
+set ignorecase        " ignore case in search
+set smartcase         " do case match if upper/lower chars entered in search
+set incsearch         " incrimental search
+set hlsearch          " highlighting when searching
+set wrapscan
+
+" Highlight tabs & fix when appropriate
+syn match tab display "\t"
+set tabstop=2
+set softtabstop=2
+set expandtab
+
+" Syntax highlighting
+syntax on
+
+set undolevels=1000           " number of undos stored
+set noerrorbells              " no bells in terminal
+
+" trailing white space - highlight & delete
+set list
+set listchars=tab:^t,trail:-
+function! StripTrailingWhitespace()
+  let pos=getpos('.')
+  %s/\s\+$//e
+  call setpos('.', pos)
+endfunction
+autocmd BufWritePre * call StripTrailingWhitespace()
+
+" Indenting
+set autoindent
+set smartindent
+set ai sw=2
+autocmd FileType php*,js,c,java set cindent
+
+" keep a buffer above and below the cursor
+set scrolloff=3
+
+" highlight matching bracket
+set showmatch
+
+" show line numbers
+set nu
+
+" show horizontal line where cursor is
+" set cursorline
+
+" Always show status line
+set laststatus=2
+
+" Tab Completion
+set wildmode=longest,list
+
+" Set comment color
+hi Comment ctermfg=Blue
+
+" Clear any highlighting and center the window
+nnoremap <silent> <Space> :silent noh<Bar>echo<CR> zz ^
+
+" Use num pad to navigate buffers
+nmap <Tab>2 <C-W><Down>
+nmap <Tab>8 <C-W><Up>
+nmap <Tab>4 <C-W><Left>
+nmap <Tab>6 <C-W><Right>
+
+" Folds
+nmap - zf2j
+nmap + zo
+
+" Tell vim to remember certain things when we exit
+"  '10 : marks will be remembered for up to 10 previously edited files
+"  "100 : will save up to 100 lines for each register
+"  :20 : up to 20 lines of command-line history will be remembered
+"  % : saves and restores the buffer list
+"  n... : where to save the viminfo files
+set viminfo='50,\"100,:20,%,n~/.viminfo
