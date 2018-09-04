@@ -8,6 +8,10 @@
 # eg `ls ~/<tab tab>`
 set expand-tilde off
 
-# make autocompletion more lazy friendly,
+# make autocompletion case insensitive
 # eg. `cat myconfi<tab tab>` -> `cat myConfig.yml`
 set completion-ignore-case on
+
+# underscores and hyphens are interchangeable
+# during autocompletion
+set completion-map-case on
