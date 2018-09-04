@@ -1,0 +1,23 @@
+# https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+
+
+# truncate really long lines
+--max-columns=150
+
+# Add my 'web' type.
+--type-add
+web:*.{html,css,js,jsx}*
+
+--type-add
+rake:*.rake
+
+--type-add
+rb:*.{rb,rake}
+
+# format output
+--no-heading
+--colors=line:none
+--colors=line:style:bold
+
+# who cares about case
+--smart-case
