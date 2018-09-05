@@ -1,0 +1,11 @@
+# suppress GREP_OPTIONS when stdout is not
+# a terminal, ie. output is being piped
+
+
+function grep() {
+  if [ -t 1 ]; then
+    command grep $*
+  else
+    GREP_OPTIONS= command grep $*
+  fi
+}

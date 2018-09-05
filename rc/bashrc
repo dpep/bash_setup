@@ -39,8 +39,6 @@ reset
         GIT_BR_STR=""
       else
         GIT_DIRTY=""
-        # git diff-index --cached --quiet HEAD -- 2>/dev/null || GIT_DIRTY='*'
-        # git diff-files --quiet || GIT_DIRTY='*'
         git status --short | awk "{ print $2 }" | grep -q ".+" && GIT_DIRTY='*'
         GIT_BR_STR="[$GIT_DIRTY$GIT_BR]"
       fi;
@@ -68,7 +66,6 @@ reset
   alias mv='/bin/mv -i'
   alias cp='/bin/cp -i'
   alias du='/usr/bin/du -h'
-  alias grep="/usr/bin/grep --color=auto -Isn"
   alias killit="kill -9 %"
   alias g='git'
 
