@@ -32,7 +32,7 @@ function c() {
     cd $DIR
   fi
 
-  export CWD=pwd
+  export CWD=$(pwd)
   # update and truncate history file
   if [[ "$CWD" != `tail -n1 $history_file` ]]; then
     # no duplicates
