@@ -1,0 +1,9 @@
+function DevServer() {
+	local DIR="/Users/andrewjones/bidops/Bid-Ops-Web"
+
+	cd $DIR
+	webpack-dev-server
+
+}
+
+alias ds="DevServer"
