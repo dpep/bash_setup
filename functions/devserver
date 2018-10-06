@@ -1,12 +1,10 @@
 function DevServers() {
-	local DIR="/Users/andrewjones/bidops/Bid-Ops-Web"
-	local OSACMD='tell application "Terminal" to do script "cd /Users/andrewjones/bidops/Bid-Ops-Web"'
+	local APPDIR="/Users/andrewjones/bidops/Bid-Ops-Web"
 
-	osascript -e 'tell application "Terminal" to do script "cd '$DIR' && webpack-dev-server"'
+	osascript -e 'tell application "Terminal" to do script "cd '$APPDIR' && webpack-dev-server"'
+	
 	cd $DIR
 	rails s
-
-	
 }
 
 alias ds="DevServers"
