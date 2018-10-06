@@ -1,0 +1,9 @@
+function BidopsGitPull() {
+	local APPDIR="/Users/andrewjones/bidops/Bid-Ops-Web"
+	
+	cd $APPDIR
+
+	git pull
+}
+
+alias bgp="BidopsGitPull"
