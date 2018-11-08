@@ -1,13 +1,13 @@
 # autocomplete ssh and scp with known hostnames
 
 # known hosts
-hostnames=`cat ~/.ssh/known_hosts 2> /dev/null | cut -f 1 -d ' ' | sed -e s/,.*//g | uniq | grep -i [a-z]\{3,\}`
+hostnames=(`perl -lne 'print $1 if /^([a-z0-9.]+),/' ~/.ssh/known_hosts | grep -i [a-z]\{3,\}`)
 
 # ssh config
-hostnames+=`grep 'Host\b' ~/.ssh/config 2> /dev/null | grep -ioE '[a-z0-9.-]*$'`
+hostnames+=(`perl -lne 'print $1 if /^Host\s+([a-z0-9.]+)/' ~/.ssh/config`)
 
 # sort and dedup
-hostnames=`printf '%s\n' ${hostnames[@]} | sort | uniq`
+hostnames=`printf '%s\n' ${hostnames[@]} | sort -u`
 
 # enable autocomplete
 complete -W "${hostnames[@]}" ssh
