@@ -1,0 +1,30 @@
+# Path Cleaner
+#
+# Tidy up path environment variables
+
+
+function path_cleaner() {
+    local paths
+
+    if [ -n "$*" ]; then
+        # capture and capitalize paths
+        paths=`echo $* | tr 'a-z' 'A-Z'`
+    else
+        # defaults to the usual suspects
+        paths="CDPATH PATH PYTHONPATH"
+    fi
+
+    for item in $paths; do
+        val=$(eval "echo \$$item")
+
+        if [ -z "$val" ]; then
+            continue
+        fi
+
+        # use awk to uniq list items, preserving precedence order
+        val=$(eval "echo \$$item" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":")
+
+        # update environment variable
+        eval "$item=$val"
+    done
+}
