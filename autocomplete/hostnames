@@ -1,7 +1,7 @@
 # autocomplete ssh and scp with known hostnames
 
 # known hosts
-hostnames=(`perl -lne 'print $1 if /^([a-z0-9.]+),/' ~/.ssh/known_hosts | grep -i [a-z]\{3,\}`)
+hostnames=(`perl -lne 'print $1 if /^([a-z]{3}[a-z0-9.]+),/' ~/.ssh/known_hosts`)
 
 # ssh config
 hostnames+=(`perl -lne 'print $1 if /^Host\s+([a-z0-9.]+)/' ~/.ssh/config`)

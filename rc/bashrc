@@ -71,14 +71,14 @@ reset
 
 
 # Load Aliases
-  if [ -f ~/.bash_aliases ]; then
-      . ~/.bash_aliases
-  fi
+  [ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
 
   # prevent Control-d from logging you out
   shopt -s -o ignoreeof
 
+  # tolerate small directory misspelling with cd
+  shopt -s cdspell dirspell direxpand
 
   # set terminal title
   echo -ne "\033]0;${USER}@"`hostname | cut -d'.' -f1,2`"\007"

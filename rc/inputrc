@@ -12,6 +12,11 @@ set expand-tilde off
 # eg. `cat myconfi<tab tab>` -> `cat myConfig.yml`
 set completion-ignore-case on
 
-# underscores and hyphens are interchangeable
-# during autocompletion
+# underscores and hyphens are interchangeable during autocompletion
 set completion-map-case on
+
+# stop annoying noises
+#set bell-style visible
+
+# single tab partially completes word and shows completions if still ambiguous
+set show-all-if-ambiguous on
