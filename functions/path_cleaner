@@ -8,23 +8,36 @@ function path_cleaner() {
 
     if [ -n "$*" ]; then
         # capture and capitalize paths
-        paths=`echo $* | tr 'a-z' 'A-Z'`
+        paths=(`echo "$*" | tr 'a-z' 'A-Z'`)
     else
-        # defaults to the usual suspects
-        paths="CDPATH PATH PYTHONPATH"
+        # default to the usual suspects
+        paths=(
+            CDPATH
+            PATH
+            PYTHONPATH
+        )
     fi
 
-    for item in $paths; do
-        val=$(eval "echo \$$item")
+    local path
+    for path in "${paths[@]}"; do
+        local val="${!path}"
 
+        # clean up empty paths
         if [ -z "$val" ]; then
+            unset $path
             continue
         fi
 
-        # use awk to uniq list items, preserving precedence order
-        val=$(eval "echo \$$item" | tr ":" "\n" | awk '!seen[$0]++' | tr "\n" ":")
+        # uniq the list while preserving order
+        val=$(echo $val | tr ":" "\n" | awk '!seen[$0]++' ORS=:)
+
+        # remove empty entries
+        val="${val//::/:}"
+
+        # remove trailing separator
+        val="${val%%:}"
 
         # update environment variable
-        eval "$item=$val"
+        eval "$path=$val"
     done
 }
