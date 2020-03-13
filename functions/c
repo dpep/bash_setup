@@ -45,3 +45,7 @@ function c() {
 
   ls
 }
+
+
+# autocomplete with available directories, respecting filter
+complete -d -X "*@(`echo $DIGNORE | tr ':' '|'`)" -o default c
