@@ -40,9 +40,12 @@ fi
 # start up a new agent and save env vars
 if [ -z "$SSH_AGENT_PID" ]; then
     echo 'ssh-agent: starting new agent'
-    ssh-agent -s | sed 's/^echo/#echo/' > ~/.ssh/env
+    ssh-agent | grep -v echo > ~/.ssh/env
     chmod 600 ~/.ssh/env
-    source ~/.ssh/env > /dev/null 2>&1
+    source ~/.ssh/env
+
+    # load keys
+    ssh-add
 fi
 
 
