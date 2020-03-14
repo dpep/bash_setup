@@ -1,14 +1,11 @@
 # Vim wrapper
 #
-# shortens the command name and makes it easier
-# to jump to a specific line number, eg.
+# shortens the command name and makes jumping to a
+# specific line easier, eg.
 # `v filename +3`
 # `v filename:3`
 
 
 function v() {
-  if [ -f $1 ] ; then
-    file=`echo $* | perl -p -e 's/(.*):(\d+)/$1 +$2/'`
-    vim $file
-  fi
+  vim ${*/:/ +}
 }
