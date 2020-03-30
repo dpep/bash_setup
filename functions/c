@@ -7,6 +7,7 @@
 
 function c() {
   local DIR="$*"
+  local history_file=~/.cd_history
 
   if [[ $DIR == "[" || $DIR == "]" ]]; then
     # go to current working dir
@@ -24,8 +25,6 @@ function c() {
   export CWD=`pwd`
 
   if [ -n "$HISTSIZE" ]; then
-    local history_file=~/.cd_history
-
     # update and truncate history file
     if [[ "$CWD" != `tail -n1 $history_file` ]]; then
       # not a duplicate
