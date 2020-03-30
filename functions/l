@@ -1,0 +1,16 @@
+# ls++
+
+_l_regex=$(echo $DIGNORE:$FIGNORE | tr ':' '|')
+_l_regex=${_l_regex%|}
+
+function l() {
+  if [ -f "$*" ] ; then
+    ls -l $*
+  else
+    ls $* | grep -v -E "($_l_regex)"
+  fi
+}
+
+
+# autocomplete with available directories, respecting filter
+complete -f -d -X "*@($_l_regex)" l
