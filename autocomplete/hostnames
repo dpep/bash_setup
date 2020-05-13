@@ -1,10 +1,14 @@
 # autocomplete ssh and scp with known hostnames
 
 # known hosts
-hostnames=(`perl -lne 'print $1 if /^([a-z]{3}[a-z0-9.]+),/' ~/.ssh/known_hosts`)
+if [ -e ~/.ssh/known_hosts ]; then
+  hostnames=(`perl -lne 'print $1 if /^([a-z]{3}[a-z0-9.]+),/' ~/.ssh/known_hosts`)
+fi
 
 # ssh config
-hostnames+=(`perl -lne 'print $1 if /^Host\s+([a-z0-9.]+)/' ~/.ssh/config`)
+if [ -e ~/.ssh/config ]; then
+  hostnames+=(`perl -lne 'print $1 if /^Host\s+([a-z0-9.]+)/' ~/.ssh/config`)
+fi
 
 # sort and dedup
 hostnames=`printf '%s\n' ${hostnames[@]} | sort -u`
