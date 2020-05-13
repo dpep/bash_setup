@@ -1,6 +1,8 @@
 # autocomplete psql hostnames
 
-hostnames=`cat ~/.pgpass | grep -Ev '^\s*#' | grep : | cut -d: -f1 | sort -u`
-complete -W "${hostnames[@]}" psql
+if [ -e ~/.pgpass ]; then
+  hostnames=`cat ~/.pgpass | grep -Ev '^\s*#' | grep : | cut -d: -f1 | sort -u`
+  complete -W "${hostnames[@]}" psql
 
-unset hostnames
+  unset hostnames
+fi
