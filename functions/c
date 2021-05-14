@@ -19,7 +19,7 @@ function c() {
     # specified a file, go to the containing directory
     cd `dirname $DIR`
   else
-    cd $DIR
+    cd "$DIR"
   fi
 
   export CWD=`pwd`
