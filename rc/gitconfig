@@ -10,7 +10,7 @@
   b = branch -v
   br = branch -v
   co = checkout
-  com = !git checkout master && git pull
+  com = !git checkout $(git main) && git pull
   ci = commit
   d = diff
   st = status
@@ -18,6 +18,10 @@
   e = commit --amend -e
   dd = branch -d
   root = rev-parse --show-toplevel
+
+  # aids in the migration from master => main
+  main = !git show-ref --quiet main && echo 'main' || echo 'master'
+  remaster = !git fetch && git branch --set-upstream-to=origin/main && git remote set-head origin main && git branch -d master
 
   # does the branch contain uncommitted changes
   dirty = !git diff-index --name-only HEAD
