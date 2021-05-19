@@ -21,7 +21,7 @@
 
   # aids in the migration from master => main
   main = !git show-ref --quiet main && echo 'main' || echo 'master'
-  remaster = !git fetch && git branch --set-upstream-to=origin/main && git remote set-head origin main && git branch -d master
+  remaster = !git fetch && git branch --set-upstream-to=origin/main && git remote set-head origin main && git branch -m master main
 
   # does the branch contain uncommitted changes
   dirty = !git diff-index --name-only HEAD
