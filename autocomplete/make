@@ -1,0 +1,7 @@
+# autocomplete Makefile targets
+
+function _complete_make() {
+  COMPREPLY=($(compgen -W "`grep -E '^\w+:' Makefile | cut -d: -f1`" -- $2));
+}
+
+complete -F _complete_make make
