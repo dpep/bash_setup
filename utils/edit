@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# TODO: find better means to override ENV var
+EDITOR=/usr/local/bin/sublime
+
+function edit() {
+  # remove github prefix if present
+  path=$(sed -E 's|.*github.com/[^/]+/[^/]+/blob/(main\|master)/||i' <<< "$1")
+
+  # split line number suffix if present
+  parts=$(sed -E 's/#L|:([0-9]+)$/\t\1/' <<< "$path")
+
+  # split into array
+  parts=($parts)
+
+  path=${parts[0]}
+  line_num=${parts[1]}
+
+  if [ -n "$line_num" ]; then
+    $EDITOR "$path:$line_num"
+  else
+    $EDITOR "$path"
+  fi
+}
+
+if [ -n "$1" ]; then
+  # use command line arguments
+  edit "$@"
+else
+  # read from stdin
+  while read -r line ; do
+    edit $line
+  done
+fi
