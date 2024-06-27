@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # TODO: find better means to override ENV var
-EDITOR=/usr/local/bin/sublime
+EDITOR=`which sublime`
 
 function edit() {
   # remove github prefix if present
