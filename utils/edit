@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# TODO: find better means to override ENV var
-EDITOR=`which sublime`
+EEDITOR=${EEDITOR:-$EDITOR}
 
 function edit() {
   # remove github prefix if present
@@ -17,9 +16,9 @@ function edit() {
   line_num=${parts[1]}
 
   if [ -n "$line_num" ]; then
-    $EDITOR "$path:$line_num"
+    $EEDITOR "$path:$line_num"
   else
-    $EDITOR "$path"
+    $EEDITOR "$path"
   fi
 }
 
