@@ -2,7 +2,7 @@
 # `c path/to/dir/like/normal/cd`
 # `c path/to/file/also/work`
 # `c [`  # cd a separate shell into the same dir
-# `c -1`  # go back to the last dir you were in, like popd
+# `c -`  # go back to the last dir you were in, like `cd -` or `popd`
 
 
 function c() {
@@ -12,7 +12,7 @@ function c() {
   if [[ $DIR == "[" || $DIR == "]" ]]; then
     # go to current working dir
     cd `tail -n1 $history_file`
-  elif [[ $DIR == '-1' ]]; then
+  elif [[ $DIR == '-' ]]; then
     # go back to last visited dir
     cd `tail -n2 $history_file | head -n1`
   elif [ -f $DIR ]; then
