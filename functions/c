@@ -6,32 +6,35 @@
 
 
 function c() {
-  local DIR="$*"
+  local dir="$1"
   local history_file=~/.cd_history
 
-  if [[ $DIR == "[" || $DIR == "]" ]]; then
+  if [[ $dir == "[" || $dir == "]" ]]; then
     # go to current working dir
-    cd `tail -n1 $history_file`
-  elif [[ $DIR == '-' ]]; then
+    cd $(tail -n1 $history_file) || exit
+  elif [[ $dir == '-' ]]; then
     # go back to last visited dir
-    cd `tail -n2 $history_file | head -n1`
-  elif [ -f $DIR ]; then
+    cd $(tail -n2 $history_file | head -n1) || exit
+  elif [ -f "$dir" ]; then
     # specified a file, go to the containing directory
-    cd `dirname $DIR`
+    cd $(dirname "$dir") || exit
+  elif [ -z "$dir" ]; then
+    # no argument
+    cd || exit
   else
-    cd "$DIR"
+    cd "$dir" || exit
   fi
 
-  export CWD=`pwd`
+  CWD=$(pwd)
 
   if [ -n "$HISTSIZE" ]; then
     # update and truncate history file
-    if [[ "$CWD" != `tail -n1 $history_file` ]]; then
+    if [[ "$CWD" != $(tail -n1 $history_file) ]]; then
       # not a duplicate
-      echo $CWD >> "$history_file"
+      echo "$CWD" >> "$history_file"
     fi
 
-    local line_count=`wc -l < $history_file`
+    local line_count=$(wc -l < $history_file)
     while [[ "$line_count" -gt $HISTSIZE ]]; do
       # remove first entry (FIFO)
       sed -i "" "1 d" $history_file
@@ -44,4 +47,4 @@ function c() {
 
 
 # autocomplete with available directories, respecting filter
-complete -d -X "*@(`echo $DIGNORE | tr ':' '|'`)" -o default c
+complete -d -X "*@($(echo "$DIGNORE" | tr ':' '|'))" -o default c
