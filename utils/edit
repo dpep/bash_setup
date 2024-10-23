@@ -1,8 +1,8 @@
 #!/bin/sh
 
-EEDITOR=${EEDITOR:-$EDITOR}
+EDITOR=${VEDITOR:-$EDITOR}
 
-function edit() {
+edit() {
   # remove github prefix if present
   path=$(sed -E 's|.*github.com/[^/]+/[^/]+/blob/(main\|master)/||i' <<< "$1")
 
@@ -16,9 +16,9 @@ function edit() {
   line_num=${parts[1]}
 
   if [ -n "$line_num" ]; then
-    $EEDITOR "$path:$line_num"
+    $EDITOR "$path:$line_num"
   else
-    $EEDITOR "$path"
+    $EDITOR "$path"
   fi
 }
 
@@ -28,6 +28,6 @@ if [ -n "$1" ]; then
 else
   # read from stdin
   while read -r line ; do
-    edit $line
+    edit "$line"
   done
 fi
