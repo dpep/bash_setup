@@ -1,3 +1,5 @@
+# https://git-scm.com/docs
+
 [user]
 #  name  = <your_unixname>
 #  email = <your_email>
@@ -69,7 +71,7 @@
   untracked = cyan
 
 [push]
-  default = simple
+  default = current  # push current branch to remote branch with same name
 
 [branch]
   autosetuprebase = always  # default to `git pull --rebase`
