@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Make movement easier, eg.
 # `c path/to/dir/like/normal/cd`
 # `c path/to/file/also/work`
@@ -5,46 +7,46 @@
 # `c -`  # go back to the last dir you were in, like `cd -` or `popd`
 
 
-function c() {
+c() {
   local dir="$1"
-  local history_file=~/.cd_history
+  local history_file="$HOME/.cd_history"
 
-  if [[ $dir == "[" || $dir == "]" ]]; then
+  if [ "$dir" = "[" ] || [ "$dir" = "]" ]; then
     # go to current working dir
-    cd $(tail -n1 $history_file) || exit
-  elif [[ $dir == '-' ]]; then
+    cd "$(tail -n1 "$history_file")" || return
+  elif [ "$dir" = "-" ]; then
     # go back to last visited dir
-    cd $(tail -n2 $history_file | head -n1) || exit
+    cd "$(tail -n2 "$history_file" | head -n1)" || return
   elif [ -f "$dir" ]; then
     # specified a file, go to the containing directory
-    cd $(dirname "$dir") || exit
+    cd "$(dirname "$dir")" || return
   elif [ -z "$dir" ]; then
     # no argument
-    cd || exit
+    cd || return
   else
-    cd "$dir" || exit
+    cd "$dir" || return
   fi
 
-  CWD=$(pwd)
+  local cwd
+  cwd=$(pwd)
 
   if [ -n "$HISTSIZE" ]; then
-    # update and truncate history file
-    if [[ "$CWD" != $(tail -n1 $history_file) ]]; then
-      # not a duplicate
-      echo "$CWD" >> "$history_file"
+    # record, skipping consecutive duplicates
+    if [ "$cwd" != "$(tail -n1 "$history_file" 2>/dev/null)" ]; then
+      echo "$cwd" >> "$history_file"
     fi
 
-    local line_count=$(wc -l < $history_file)
-    while [[ "$line_count" -gt $HISTSIZE ]]; do
-      # remove first entry (FIFO)
-      sed -i "" "1 d" $history_file
-      line_count=$((line_count - 1))
-    done
+    # truncate to the most recent HISTSIZE entries (FIFO)
+    tail -n "$HISTSIZE" "$history_file" > "$history_file.tmp" &&
+      mv "$history_file.tmp" "$history_file"
   fi
 
   ls
 }
 
 
-# autocomplete with available directories, respecting filter
-complete -d -X "*@($(echo "$DIGNORE" | tr ':' '|'))" -o default c
+# bash-only: autocomplete dirs, respecting the filter
+if [ -n "$BASH_VERSION" ] && [ -n "$DIGNORE" ]; then
+  shopt -s extglob
+  complete -d -X "*@($(printf '%s' "$DIGNORE" | tr ':' '|'))" -o default c
+fi
