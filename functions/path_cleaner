@@ -1,43 +1,36 @@
 # Path Cleaner
 #
-# Tidy up path environment variables
+# Tidy up path environment variables - dedup, compact, preserve order
 
 
-function path_cleaner() {
-    local paths
-
-    if [ -n "$*" ]; then
-        # capture and capitalize paths
-        paths=(`echo "$*" | tr 'a-z' 'A-Z'`)
-    else
-        # default to the usual suspects
-        paths=(
-            CDPATH
-            PATH
-            PYTHONPATH
-        )
+path_cleaner() {
+    # default to the usual suspects
+    if [ "$#" -eq 0 ]; then
+        set -- CDPATH PATH PYTHONPATH
     fi
 
-    local path
-    for path in "${paths[@]}"; do
-        local val="${!path}"
+    local name val
+    for name in "$@"; do
+        [ -n "$name" ] || continue
 
-        # clean up empty paths
+        # read the variable's current value indirectly
+        eval "val=\${$name}"
+
+        # filter non-existent directories, drop duplicates, preserve order
+        val=$(
+            printf '%s' "$val" | tr ':' '\n' | while IFS= read -r entry; do
+                [ -d "$entry" ] && printf '%s\n' "$entry"
+            done | awk '!seen[$0]++' ORS=:
+        )
+
+        # drop trailing colon
+        val=${val%:}
+
+        # write the cleaned value back, or drop if empty
         if [ -z "$val" ]; then
-            unset $path
-            continue
+            unset "$name"
+        else
+            eval "$name=\"\$val\""
         fi
-
-        # uniq the list while preserving order
-        val=$(echo $val | tr ":" "\n" | awk '!seen[$0]++' ORS=:)
-
-        # remove empty entries
-        val="${val//::/:}"
-
-        # remove trailing separator
-        val="${val%%:}"
-
-        # update environment variable
-        eval "$path=$val"
     done
 }
