@@ -1,16 +1,24 @@
+#!/bin/sh
+
 # ls++
+# set DIGNORE / FIGNORE env vars to filter results
 
-_l_regex=$(echo $DIGNORE:$FIGNORE | tr ':' '|')
-_l_regex=${_l_regex%|}
+# build regex from ignore lists
+_l_regex=$(printf '%s' "$DIGNORE:$FIGNORE" | tr ':' '\n' | grep -v '^$' | paste -sd'|' -)
 
-function l() {
+l() {
   if [ -f "$*" ] ; then
-    ls -l $*
+    ls -l "$@"
+  elif [ -n "$_l_regex" ]; then
+    ls "$@" | grep -v -E "($_l_regex)"
   else
-    ls $* | grep -v -E "($_l_regex)"
+    ls "$@"
   fi
 }
 
 
-# autocomplete with available directories, respecting filter
-complete -f -d -X "*@($_l_regex)" l
+# bash-only: autocomplete files/dirs, respecting the filters
+if [ -n "$BASH_VERSION" ] && [ -n "$_l_regex" ]; then
+  shopt -s extglob
+  complete -f -d -X "*@($_l_regex)" l
+fi
