@@ -6,8 +6,8 @@
 
 grep() {
   if [ -t 1 ]; then
-    command grep "$*"
+    command grep "$@"
   else
-    GREP_OPTIONS= command grep "$*"
+    GREP_OPTIONS= command grep "$@"
   fi
 }
