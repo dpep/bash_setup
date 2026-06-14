@@ -4,11 +4,10 @@
 
 
 ssh_agent_alive() {
-  if [ -n "$SSH_AGENT_PID" ]; then
-    return "$(ps -p "$SSH_AGENT_PID" | grep -q 'ssh-agent')"
-  fi
+  [ -n "$SSH_AGENT_PID" ] || return 1
 
-  return 0
+  # alive iff a running process with that PID is an ssh-agent
+  ps -p "$SSH_AGENT_PID" -o comm= 2>/dev/null | grep -q ssh-agent
 }
 
 
@@ -50,7 +49,7 @@ fi
 
 
 # tidy up
-unset ssh_agent_alive
+unset -f ssh_agent_alive
 
 # echo $SSH_AGENT_PID
 # echo $SSH_AUTH_SOCK
