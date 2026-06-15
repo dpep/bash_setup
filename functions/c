@@ -27,18 +27,13 @@ c() {
     cd "$dir" || return
   fi
 
-  local cwd
-  cwd=$(pwd)
-
   if [ -n "$HISTSIZE" ]; then
-    # record, skipping consecutive duplicates
-    if [ "$cwd" != "$(tail -n1 "$history_file" 2>/dev/null)" ]; then
-      echo "$cwd" >> "$history_file"
-    fi
+    # record
+    echo "$(pwd)" >> "$history_file"
 
-    # truncate to the most recent HISTSIZE entries (FIFO)
-    tail -n "$HISTSIZE" "$history_file" > "$history_file.tmp" &&
-      mv "$history_file.tmp" "$history_file"
+    # dedup and truncate (FIFO)
+    tail -n "$HISTSIZE" "$history_file" | tac | awk '!seen[$0]++' | tac > "$history_file.tmp" &&
+      mv -f "$history_file.tmp" "$history_file"
   fi
 
   ls
